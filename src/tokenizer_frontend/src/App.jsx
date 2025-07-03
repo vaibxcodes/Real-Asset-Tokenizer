@@ -1,31 +1,29 @@
 import { useState } from 'react';
 import { tokenizer_backend } from 'declarations/tokenizer_backend';
+import Home from './component/Home';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import About from './component/About';
+import Feature from './component/Feature';
+import Dashboard from './component/Dashboard'
+import Marketplace from './component/Marketplace';
+import Login from './component/Login'
+
 
 function App() {
-  const [greeting, setGreeting] = useState('');
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    tokenizer_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
-    });
-    return false;
-  }
-
   return (
-    <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
-      </form>
-      <section id="greeting">{greeting}</section>
-    </main>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+           <Route path="/feature" element={<Feature/>} />
+           <Route path="/dashboard" element={<Dashboard/>} />
+           <Route path="/marketplace" element={<Marketplace/>} />
+           <Route path="/login" element={ <Login/>} />
+      </Routes>
+    </BrowserRouter>
   );
 }
+
+
 
 export default App;
