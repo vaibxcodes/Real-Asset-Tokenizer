@@ -1,6 +1,6 @@
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useWallet } from "./WalletContext";
 import {
   LineChart,
   Line,
@@ -27,30 +27,61 @@ const liveProperties = [
 ];
 
 export default function Dashboard() {
-  return (
-     <div className="bg-black text-white min-h-screen font-sans">
-        <header className="p-6 flex justify-between items-center bg-black">
-     <h1 className="text-2xl font-bold text-purple-500">RealAsset Tokenizer</h1>
-    <nav>
-             <ul className="flex space-x-6 text-sm uppercase">
-                <li><Link to="/" className="hover:text-purple-400">Home</Link></li>
-               <li><Link to="/dashboard" className="hover:text-purple-400">Dashboard</Link></li>
-               <li><Link to="/about" className="hover:text-purple-400">About</Link></li>
-               <li><Link to="/feature" className="hover:text-purple-400">Feature</Link></li>
-              <li><Link to="/marketplace" className="hover:text-purple-400">Marketplace</Link></li>
-              
-              <li><Link to="/login" className="hover:text-purple-400">Login</Link></li>
-             </ul>
-           </nav>
-  </header>
-      <h1 className="text-4xl font-bold text-center mb-4">User Dashboard</h1>
-      <p className="text-center text-lg text-gray-400 mb-12">Hello, <span className="text-purple-400 font-semibold text-2xl">Akash</span></p>
+  const { principal } = useWallet();
+  const [profile, setProfile] = useState(null);
 
+  // Simulated live investment value
+  const [investment, setInvestment] = useState(130000);
+
+  // Load user profile from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem("user_profile");
+    if (stored) {
+      setProfile(JSON.parse(stored));
+    }
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setInvestment((prev) => prev + Math.floor(Math.random() * 500));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="bg-black text-white min-h-screen font-sans">
+      <header className="p-6 flex justify-between items-center bg-black">
+        <h1 className="text-2xl font-bold text-purple-500">RealAsset Tokenizer</h1>
+        <nav>
+          <ul className="flex space-x-6 text-sm uppercase">
+            <li><Link to="/" className="hover:text-purple-400">Home</Link></li>
+            <li><Link to="/dashboard" className="hover:text-purple-400">Dashboard</Link></li>
+            <li><Link to="/about" className="hover:text-purple-400">About</Link></li>
+            <li><Link to="/feature" className="hover:text-purple-400">Feature</Link></li>
+            <li><Link to="/marketplace" className="hover:text-purple-400">Marketplace</Link></li>
+            <li><Link to="/login" className="hover:text-purple-400">Login</Link></li>
+          </ul>
+        </nav>
+      </header>
+
+      <h1 className="text-4xl font-bold text-center mb-4">User Dashboard</h1>
+
+      <div className="text-center text-lg text-gray-400 mb-6">
+        Hello,&nbsp;
+        <span className="text-purple-400 font-semibold text-2xl">
+          {profile?.principal || principal || "Guest"}
+        </span>
+        {profile?.created_at && (
+          <p className="text-sm text-gray-500 mt-2">
+            Account Created: {new Date(Number(profile.created_at) / 1_000_000).toLocaleString()}
+          </p>
+        )}
+      </div>
 
       <div className="grid md:grid-cols-3 gap-6 mb-12">
         <div className="bg-gray-800 p-6 rounded-xl text-center">
           <h3 className="text-xl font-semibold mb-2">Total Investment</h3>
-          <p className="text-2xl font-bold text-purple-400">$130,000</p>
+          <p className="text-2xl font-bold text-purple-400">${investment.toLocaleString()}</p>
         </div>
         <div className="bg-gray-800 p-6 rounded-xl text-center">
           <h3 className="text-xl font-semibold mb-2">Portfolio Value</h3>
@@ -144,10 +175,10 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
+
       <footer>
-    <p className="text-sm text-gray-500 mt-6 flex justify-center">© 2025 RealAsset Tokenizer. All rights reserved.</p>
-  </footer>
+        <p className="text-sm text-gray-500 mt-6 flex justify-center">© 2025 RealAsset Tokenizer. All rights reserved.</p>
+      </footer>
     </div>
-    
   );
 }
